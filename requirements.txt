@@ -21,3 +21,4 @@ click
 peft
 tensorboard
 tensorboardX
+hf-transfer
