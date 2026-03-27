@@ -62,4 +62,4 @@ HEALTHCHECK --interval=60s --timeout=10s --start-period=5s --retries=5 \
   CMD curl -f http://localhost:7865/ || exit 1
 
 # Command to run the application with GPU support
-CMD ["python3", "infer-api.py"]
+CMD ["python3", "test-file.py", "--input_audio_path", "/app/data/input.wav", "--output_path", "/app/data/output.wav", "--ref_audio_strength", "0.5"]
