@@ -34,11 +34,11 @@ WORKDIR /app
 # Copy the repository contents
 COPY . .
 
-# Install specific PyTorch version compatible with CUDA 12.6
-RUN pip3 install --no-cache-dir --upgrade pip && \
-    pip3 install --no-cache-dir hf_transfer peft && \
-    pip3 install --no-cache-dir -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cu126
-RUN pip3 install --no-cache-dir .
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir \
+    torch torchvision torchaudio \
+    --index-url https://download.pytorch.org/whl/cu126 && \
+    pip install --no-cache-dir -r requirements.txt
 
 # Ensure target directories for volumes exist and have correct initial ownership
 RUN mkdir -p /app/outputs /app/checkpoints /app/logs && \
