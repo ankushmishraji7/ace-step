@@ -35,7 +35,7 @@ COPY requirements.txt .
 
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir \
-    torch torchvision torchaudio \
+    torch==2.6.0 torchvision==0.21.0 torchaudio==2.6.0 \
     --index-url https://download.pytorch.org/whl/cu126 && \
     pip install --no-cache-dir -r requirements.txt
 

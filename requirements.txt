@@ -22,4 +22,3 @@ peft
 tensorboard
 tensorboardX
 hf-transfer
-torchcodec
