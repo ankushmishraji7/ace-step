@@ -8,9 +8,6 @@ numpy
 pypinyin==0.53.0
 pytorch_lightning==2.5.1
 soundfile==0.13.1
-torch
-torchaudio
-torchvision
 tqdm
 transformers==4.50.0
 py3langid==0.3.0
@@ -24,3 +21,5 @@ click
 peft
 tensorboard
 tensorboardX
+hf-transfer
+boto3

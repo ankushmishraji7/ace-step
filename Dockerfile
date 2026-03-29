@@ -31,14 +31,16 @@ RUN useradd -m -u 1001 appuser
 # Set working directory
 WORKDIR /app
 
+COPY requirements.txt .
+
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir \
+    torch==2.6.0 torchvision==0.21.0 torchaudio==2.6.0 \
+    --index-url https://download.pytorch.org/whl/cu126 && \
+    pip install --no-cache-dir -r requirements.txt
+
 # Copy the repository contents
 COPY . .
-
-# Install specific PyTorch version compatible with CUDA 12.6
-RUN pip3 install --no-cache-dir --upgrade pip && \
-    pip3 install --no-cache-dir hf_transfer peft && \
-    pip3 install --no-cache-dir -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cu126
-RUN pip3 install --no-cache-dir .
 
 # Ensure target directories for volumes exist and have correct initial ownership
 RUN mkdir -p /app/outputs /app/checkpoints /app/logs && \
@@ -60,4 +62,4 @@ HEALTHCHECK --interval=60s --timeout=10s --start-period=5s --retries=5 \
   CMD curl -f http://localhost:7865/ || exit 1
 
 # Command to run the application with GPU support
-CMD ["python3", "acestep/gui.py", "--server_name", "0.0.0.0", "--bf16", "true"]
+CMD ["python3", "test-file.py", "--input_audio_path", "/app/data/input.wav", "--output_path", "/app/data/output.wav", "--ref_audio_strength", "0.5"]

@@ -1,6 +1,8 @@
 import click
 import os
+from pathlib import Path
 
+from utils.s3_utils import upload_to_s3
 from acestep.pipeline_ace_step import ACEStepPipeline
 from acestep.data_sampler import DataSampler
 
@@ -47,8 +49,10 @@ def sample_data(json_data):
     "--overlapped_decode", type=bool, default=False, help="Whether to use overlapped decoding (run dcae and vocoder using sliding windows)"
 )
 @click.option("--device_id", type=int, default=0, help="Device ID to use")
-@click.option("--output_path", type=str, default=None, help="Path to save the output")
-def main(checkpoint_path, bf16, torch_compile, cpu_offload, overlapped_decode, device_id, output_path):
+@click.option("--input_audio_path", type=str, required=True, help="Path to input audio file (from data folder)")
+@click.option("--output_path", type=str, default=None, help="Path to save the output (usually in data folder)")
+@click.option("--ref_audio_strength", type=float, default=0.5, help="Strength of the reference audio input (0.0 to 1.0)")
+def main(checkpoint_path, bf16, torch_compile, cpu_offload, overlapped_decode, device_id, input_audio_path, output_path, ref_audio_strength):
     os.environ["CUDA_VISIBLE_DEVICES"] = str(device_id)
 
     model_demo = ACEStepPipeline(
@@ -87,32 +91,42 @@ def main(checkpoint_path, bf16, torch_compile, cpu_offload, overlapped_decode, d
         guidance_scale_lyric,
     ) = json_data
 
+    # Set default output path automatically if not provided
+    if output_path is None:
+        input_p = Path(input_audio_path)
+        output_path = str(input_p.parent / f"{input_p.stem}_output{input_p.suffix}")
+
     model_demo(
-        audio_duration= 0,
-        prompt= "",
-        lyrics= "",
-        infer_step= 60,
-        guidance_scale= 15,
-        scheduler_type= "euler",
-        cfg_type= "apg",
-        omega_scale=10,
-        manual_seeds="",
-        actual_seeds= [],
-        guidance_interval=0.5,
-        guidance_interval_decay=0,
-        min_guidance_scale=3,
-        use_erg_tag=true,
-        use_erg_lyric=false,
-        use_erg_diffusion=true,
-        oss_steps=[],
-        guidance_scale_text=0,
-        guidance_scale_lyric=0,
-        audio2audio_enable=true,
-        ref_audio_strength=0.5,
-        ref_audio_input= 1,
-        checkpoint_path= ""
+        audio_duration=audio_duration,
+        prompt=prompt,
+        lyrics=lyrics,
+        infer_step=infer_step,
+        guidance_scale=guidance_scale,
+        scheduler_type=scheduler_type,
+        cfg_type=cfg_type,
+        omega_scale=omega_scale,
+        manual_seeds=manual_seeds,
+        guidance_interval=guidance_interval,
+        guidance_interval_decay=guidance_interval_decay,
+        min_guidance_scale=min_guidance_scale,
+        use_erg_tag=use_erg_tag,
+        use_erg_lyric=use_erg_lyric,
+        use_erg_diffusion=use_erg_diffusion,
+        oss_steps=oss_steps,
+        guidance_scale_text=guidance_scale_text,
+        guidance_scale_lyric=guidance_scale_lyric,
+        save_path=output_path,
+        # Parameters for audio-to-audio
+        audio2audio_enable=True,
+        ref_audio_input=input_audio_path,
+        ref_audio_strength=ref_audio_strength
     )
 
+    print(f"Inference completed. Output saved to {output_path}")
+
+    # Upload to S3
+    bucket_name = "ai-generated-audio"
+    upload_to_s3(output_path, bucket_name)
 
 if __name__ == "__main__":
     main()
