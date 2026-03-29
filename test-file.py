@@ -2,7 +2,7 @@ import click
 import os
 from pathlib import Path
 
-from utils.s3_utils import upload_to_s3
+from utils.s3_utils import upload_to_s3, download_from_s3
 from acestep.pipeline_ace_step import ACEStepPipeline
 from acestep.data_sampler import DataSampler
 
@@ -91,6 +91,11 @@ def main(checkpoint_path, bf16, torch_compile, cpu_offload, overlapped_decode, d
         guidance_scale_lyric,
     ) = json_data
 
+    # Download input file from S3
+    input_bucket_name = "ai-generated-audio"
+    input_file_name = "test_track_001.mp3"
+    download_from_s3(input_bucket_name, input_file_name, input_audio_path)
+
     # Set default output path automatically if not provided
     if output_path is None:
         input_p = Path(input_audio_path)
@@ -125,8 +130,8 @@ def main(checkpoint_path, bf16, torch_compile, cpu_offload, overlapped_decode, d
     print(f"Inference completed. Output saved to {output_path}")
 
     # Upload to S3
-    bucket_name = "ai-generated-audio"
-    upload_to_s3(output_path, bucket_name)
+    generated_audio_bucket_name = "ai-generated-audio"
+    upload_to_s3(output_path, generated_audio_bucket_name)
 
 if __name__ == "__main__":
     main()
