@@ -2,6 +2,7 @@ import click
 import os
 from pathlib import Path
 
+from utils.s3_utils import upload_to_s3
 from acestep.pipeline_ace_step import ACEStepPipeline
 from acestep.data_sampler import DataSampler
 
@@ -122,6 +123,10 @@ def main(checkpoint_path, bf16, torch_compile, cpu_offload, overlapped_decode, d
     )
 
     print(f"Inference completed. Output saved to {output_path}")
+
+    # Upload to S3
+    bucket_name = "ai-generated-audio"
+    upload_to_s3(output_path, bucket_name)
 
 if __name__ == "__main__":
     main()
