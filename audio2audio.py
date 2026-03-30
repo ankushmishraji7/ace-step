@@ -84,7 +84,7 @@ def get_input_data(json_data):
 @click.option("--device_id", type=int, default=0, help="Device ID to use")
 @click.option("--output_path", type=str, default=None, help="Path to save the output (usually in data folder)")
 @click.option("--ref_audio_strength", type=float, default=0.5, help="Strength of the reference audio input (0.0 to 1.0)")
-def main(checkpoint_path, bf16, torch_compile, cpu_offload, overlapped_decode, device_id, input_audio_path, output_path, ref_audio_strength):
+def main(checkpoint_path, bf16, torch_compile, cpu_offload, overlapped_decode, device_id, output_path, ref_audio_strength):
     try:
         print("=== Starting Audio Pipeline Execution ===")
         
@@ -99,7 +99,7 @@ def main(checkpoint_path, bf16, torch_compile, cpu_offload, overlapped_decode, d
         # 2. S3 Setup / Data Dowload
         if input_bucket and input_key:
             print(f"Downloading source audio from S3: {input_bucket}/{input_key} ...")
-            download_from_s3(input_bucket, input_key, input_audio_path)
+            download_from_s3(input_bucket, input_key)
             print("Download successful.")
         else:
             print("No S3 input configuration provided in ENV. Relying on existing local file if any.")
