@@ -4,7 +4,7 @@ import json
 import sys
 from pathlib import Path
 
-from utils.s3_utils import upload_to_s3, download_from_s3, delete_from_s3
+from utils.s3_utils import upload_to_s3, download_from_s3
 from acestep.pipeline_ace_step import ACEStepPipeline
 from acestep.data_sampler import DataSampler
 
