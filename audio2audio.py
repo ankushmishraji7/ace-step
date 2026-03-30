@@ -97,9 +97,10 @@ def main(checkpoint_path, bf16, torch_compile, cpu_offload, overlapped_decode, d
             ref_audio_strength = float(temperature)
 
         # 2. S3 Setup / Data Dowload
+        input_audio_path = f"/app/data/{input_key}"
         if input_bucket and input_key:
             print(f"Downloading source audio from S3: {input_bucket}/{input_key} ...")
-            download_from_s3(input_bucket, input_key)
+            download_from_s3(input_bucket, input_key, input_audio_path)
             print("Download successful.")
         else:
             print("No S3 input configuration provided in ENV. Relying on existing local file if any.")
@@ -144,9 +145,6 @@ def main(checkpoint_path, bf16, torch_compile, cpu_offload, overlapped_decode, d
             guidance_scale_text,
             guidance_scale_lyric,
         ) = json_data
-
-        input_audio_path = f"/app/data/{input_key}"
-        download_from_s3(input_bucket, input_key, input_audio_path)
 
         # 5. Output Path Formatting
         if output_path is None:
