@@ -1,7 +1,12 @@
 FROM nvidia/cuda:12.6.0-runtime-ubuntu22.04 AS base
 
 # Set environment variables
-ENV BUCKET_REGION="ap-south-1" \
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PORT=7865 \
+    HF_HUB_ENABLE_HF_TRANSFER=1 \
+    DEBIAN_FRONTEND=noninteractive \
+    BUCKET_REGION="ap-south-1" \
     DATA="{\"input_file\": {\"bucket\": \"ai-generated-audio\", \"S3ObjectKey\": \"test_track_001.mp3\"}, \"output_file\": {\"bucket\": \"ai-generated-audio\", \"S3ObjectKey\": \"outputENV.wav\"}, \"temperature\": 0.5}"
 
 # Install Python and system dependencies
