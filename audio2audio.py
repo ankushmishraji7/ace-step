@@ -149,7 +149,8 @@ def main(checkpoint_path, bf16, torch_compile, cpu_offload, overlapped_decode, d
         # 5. Output Path Formatting
         if output_path is None:
             input_p = Path(input_audio_path)
-            output_path = str(input_p.parent / f"{input_p.stem}_output{input_p.suffix}")
+            # output will be in wav format
+            output_path = str(input_p.parent / f"{input_p.stem}_output.wav")
         
         # Ensure target directories exist
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
