@@ -5,7 +5,9 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PORT=7865 \
     HF_HUB_ENABLE_HF_TRANSFER=1 \
-    DEBIAN_FRONTEND=noninteractive
+    DEBIAN_FRONTEND=noninteractive \
+    BUCKET_REGION="ap-south-1" \
+    DATA="{\"input_file\": {\"bucket\": \"ai-generated-audio\", \"S3ObjectKey\": \"test_track_001.mp3\"}, \"output_file\": {\"bucket\": \"ai-generated-audio\", \"S3ObjectKey\": \"outputENV.wav\"}, \"temperature\": 0.5}"
 
 # Install Python and system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -31,14 +33,16 @@ RUN useradd -m -u 1001 appuser
 # Set working directory
 WORKDIR /app
 
+COPY requirements.txt .
+
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir \
+    torch==2.6.0 torchvision==0.21.0 torchaudio==2.6.0 \
+    --index-url https://download.pytorch.org/whl/cu126 && \
+    pip install --no-cache-dir -r requirements.txt
+
 # Copy the repository contents
 COPY . .
-
-# Install specific PyTorch version compatible with CUDA 12.6
-RUN pip3 install --no-cache-dir --upgrade pip && \
-    pip3 install --no-cache-dir hf_transfer peft && \
-    pip3 install --no-cache-dir -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cu126
-RUN pip3 install --no-cache-dir .
 
 # Ensure target directories for volumes exist and have correct initial ownership
 RUN mkdir -p /app/outputs /app/checkpoints /app/logs && \
@@ -60,4 +64,4 @@ HEALTHCHECK --interval=60s --timeout=10s --start-period=5s --retries=5 \
   CMD curl -f http://localhost:7865/ || exit 1
 
 # Command to run the application with GPU support
-CMD ["python3", "acestep/gui.py", "--server_name", "0.0.0.0", "--bf16", "true"]
+CMD ["python3", "audio2audio.py", "--checkpoint_path", "/home/appuser/.cache/ace-step/checkpoints"]
