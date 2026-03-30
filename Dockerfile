@@ -64,4 +64,4 @@ HEALTHCHECK --interval=60s --timeout=10s --start-period=5s --retries=5 \
   CMD curl -f http://localhost:7865/ || exit 1
 
 # Command to run the application with GPU support
-CMD ["python3", "/app/generate/audio2audio.py", "--checkpoint_path", "/home/appuser/.cache/ace-step/checkpoints", "--input_audio_path", "/app/data/input.wav", "--output_path", "/app/data/output.wav", "--ref_audio_strength", "0.5"]
+CMD ["python3", "audio2audio.py", "--checkpoint_path", "/home/appuser/.cache/ace-step/checkpoints", "--input_audio_path", "/app/data/input.wav", "--output_path", "/app/data/output.wav", "--ref_audio_strength", "0.5"]
