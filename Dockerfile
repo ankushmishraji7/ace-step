@@ -5,7 +5,9 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PORT=7865 \
     HF_HUB_ENABLE_HF_TRANSFER=1 \
-    DEBIAN_FRONTEND=noninteractive
+    DEBIAN_FRONTEND=noninteractive \
+    BUCKET_REGION="ap-south-1" \
+    DATA="{\"input_file\": {\"bucket\": \"ai-generated-audio\", \"S3ObjectKey\": \"test_track_001.mp3\"}, \"output_file\": {\"bucket\": \"ai-generated-audio\", \"S3ObjectKey\": \"outputENV.wav\"}, \"temperature\": 0.5}"
 
 # Install Python and system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -62,4 +64,4 @@ HEALTHCHECK --interval=60s --timeout=10s --start-period=5s --retries=5 \
   CMD curl -f http://localhost:7865/ || exit 1
 
 # Command to run the application with GPU support
-CMD ["python3", "test-file.py", "--checkpoint_path", "/home/appuser/.cache/ace-step/checkpoints", "--input_audio_path", "/app/data/input.wav", "--output_path", "/app/data/output.wav", "--ref_audio_strength", "0.5"]
+CMD ["python3", "/app/generate/audio2audio.py", "--checkpoint_path", "/home/appuser/.cache/ace-step/checkpoints", "--input_audio_path", "/app/data/input.wav", "--output_path", "/app/data/output.wav", "--ref_audio_strength", "0.5"]
