@@ -23,7 +23,7 @@ def upload_to_s3(file_path, bucket_name, object_name=None):
         print(f"Error uploading file to S3: {e}")
         raise e
 
-def download_from_s3(bucket_name, object_name):
+def download_from_s3(bucket_name, object_name, file_path):
     """
     Download a file from an S3 bucket
     
@@ -31,7 +31,6 @@ def download_from_s3(bucket_name, object_name):
     :param object_name: S3 object name. If not specified then file_path is used
     :return: True if file was downloaded, else False
     """
-    file_path = f"/app/data/{object_name}"
     if object_name is None:
         object_name = os.path.basename(file_path)
 

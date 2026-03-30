@@ -105,9 +105,6 @@ def main(checkpoint_path, bf16, torch_compile, cpu_offload, overlapped_decode, d
             print("No S3 input configuration provided in ENV. Relying on existing local file if any.")
             raise ValueError("No S3 input configuration provided in ENV")
 
-        if not os.path.exists(input_audio_path):
-            raise FileNotFoundError(f"Input audio file not found at {input_audio_path}")
-
         # 3. Model Setup
         os.environ["CUDA_VISIBLE_DEVICES"] = str(device_id)
         print("Initializing ACEStepPipeline...")
@@ -148,6 +145,7 @@ def main(checkpoint_path, bf16, torch_compile, cpu_offload, overlapped_decode, d
             guidance_scale_lyric,
         ) = json_data
 
+        input_audio_path = f"/app/data/{input_key}"
         download_from_s3(input_bucket, input_key, input_audio_path)
 
         # 5. Output Path Formatting
