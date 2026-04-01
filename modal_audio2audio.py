@@ -12,8 +12,11 @@ image = (
         "torch==2.6.0", "torchvision==0.21.0", "torchaudio==2.6.0",
         extra_index_url="https://download.pytorch.org/whl/cu126"
     )
-    .add_local_dir(".", remote_path="/app")
+    # STEP 1: Copy ONLY the requirements first to build the cache
+    .add_local_file("requirements.txt", remote_path="/app/requirements.txt", copy=True)
     .run_commands("pip install --no-cache-dir -r /app/requirements.txt")
+    # STEP 2: Copy the rest of the app (needed if your package requires 'setup.py' to run)
+    .add_local_dir(".", remote_path="/app", copy=True)
     .run_commands("pip install --no-cache-dir /app")
     .env({
         "HF_HUB_ENABLE_HF_TRANSFER": "1",
