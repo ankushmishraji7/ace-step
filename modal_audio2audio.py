@@ -12,7 +12,7 @@ image = (
         "torch==2.6.0", "torchvision==0.21.0", "torchaudio==2.6.0",
         extra_index_url="https://download.pytorch.org/whl/cu126"
     )
-    .copy_local_dir(".", remote_path="/app")
+    .add_local_dir(".", remote_path="/app")
     .run_commands("pip install --no-cache-dir -r /app/requirements.txt")
     .run_commands("pip install --no-cache-dir /app")
     .env({
