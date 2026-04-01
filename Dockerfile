@@ -3,9 +3,13 @@ FROM nvidia/cuda:12.6.0-runtime-ubuntu22.04 AS base
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
+    MODAL_TOKEN_ID=ak-lsuGKkEuAlnfT3Q1F9gYyh \
+    MODAL_TOKEN_SECRET=as-dExBaTF58KF5Jp7DXfL3mb \
     PORT=7865 \
     HF_HUB_ENABLE_HF_TRANSFER=1 \
-    DEBIAN_FRONTEND=noninteractive
+    DEBIAN_FRONTEND=noninteractive \
+    BUCKET_REGION="ap-south-1" \
+    DATA="{\"input_file\": {\"bucket\": \"ai-generated-audio\", \"S3ObjectKey\": \"test_track_001.mp3\"}, \"output_file\": {\"bucket\": \"ai-generated-audio\", \"S3ObjectKey\": \"outputENV.wav\"}, \"temperature\": 0.5}"
 
 # Install Python and system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -61,5 +65,5 @@ VOLUME [ "/app/checkpoints", "/app/outputs", "/app/logs" ]
 HEALTHCHECK --interval=60s --timeout=10s --start-period=5s --retries=5 \
   CMD curl -f http://localhost:7865/ || exit 1
 
-# Command to run the application with GPU support
-CMD ["python3", "audio2audio.py", "--checkpoint_path", "/home/appuser/.cache/ace-step/checkpoints"]
+# Command to trigger the Modal serverless function
+CMD ["modal", "run", "modal_audio2audio.py"]
