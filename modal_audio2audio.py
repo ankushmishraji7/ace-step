@@ -191,7 +191,7 @@ def process_audio(
 # 1. We use a standard @app.function() with NO gpu specified. 
 # This tells Modal to run this endpoint on a cheap, fast CPU.
 @app.function() 
-@modal.web_endpoint(method="POST")
+@modal.fastapi_endpoint(method="POST")
 def api_endpoint(data: dict):
     """
     Web entrypoint. Runs on a CPU, receives the HTTP POST, 
