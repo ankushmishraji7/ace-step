@@ -62,4 +62,4 @@ HEALTHCHECK --interval=60s --timeout=10s --start-period=5s --retries=5 \
   CMD curl -f http://localhost:7865/ || exit 1
 
 # Command to trigger the Modal serverless function
-CMD ["modal", "run", "modal_audio2audio.py"]
+CMD ["modal", "deploy", "modal_audio2audio.py"]

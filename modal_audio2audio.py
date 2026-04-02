@@ -188,26 +188,42 @@ def process_audio(
         traceback.print_exc()
         raise e
 
-@app.local_entrypoint()
-def main(
-    data_payload: str = None
-):
+# 1. We use a standard @app.function() with NO gpu specified. 
+# This tells Modal to run this endpoint on a cheap, fast CPU.
+@app.function() 
+@modal.web_endpoint(method="POST")
+def api_endpoint(data: dict):
     """
-    Local entrypoint. Runs the `process_audio` Modal function securely in the Cloud.
-    Example:
-    $ modal run modal_audio2audio.py --data-payload '{"input_file": {"bucket": "my-bucket", "S3ObjectKey": "test.wav"}}'
+    Web entrypoint. Runs on a CPU, receives the HTTP POST, 
+    and dispatches the job to the A100 GPU securely in the Cloud.
     """
-    if data_payload is None:
-        # Fallback to checking the local shell for 'DATA' env if CLI param isn't strictly provided
-        data_payload = os.getenv("DATA")
-        
-    if not data_payload:
-        print("Error: You must provide a JSON payload via --data-payload or set the DATA environment variable.", file=sys.stderr)
-        sys.exit(1)
+    import json
+    
+    print(f"API hit! Received payload: {data}")
+    
+    if not data:
+        return {"error": "You must provide a JSON payload in the POST body."}
 
-    print("Dispatching workload to Modal...")
+    print("Dispatching workload to the A100 GPU...")
     
-    # This blocks until the Modal process completes in the cloud
-    process_audio.remote(data_payload)
-    
-    print("Modal workload completed locally!")
+    try:
+        # We convert the dict back to a string because your process_audio 
+        # function currently expects `env_data_json: str`
+        payload_str = json.dumps(data)
+        
+        # .remote() blocks this CPU container until the GPU container finishes
+        process_audio.remote(payload_str)
+        
+        print("Modal GPU workload completed!")
+        
+        # Return a JSON response back to your MERN Fargate server
+        return {
+            "status": "success", 
+            "message": "Audio generation completed and uploaded to S3."
+        }
+        
+    except Exception as e:
+        return {
+            "status": "error",
+            "message": str(e)
+        }
