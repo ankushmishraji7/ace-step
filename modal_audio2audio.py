@@ -9,7 +9,7 @@ image = (
     modal.Image.debian_slim(python_version="3.10")
     .apt_install("git", "curl", "wget", "ffmpeg")
     .pip_install(
-        "torch==2.6.0", "torchvision==0.21.0", "torchaudio==2.6.0",
+        "fastapi[standard]", "torch==2.6.0", "torchvision==0.21.0", "torchaudio==2.6.0",
         extra_index_url="https://download.pytorch.org/whl/cu126"
     )
     # STEP 1: Copy ONLY the requirements first to build the cache
