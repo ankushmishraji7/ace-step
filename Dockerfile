@@ -3,6 +3,8 @@ FROM nvidia/cuda:12.6.0-runtime-ubuntu22.04 AS base
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
+    MODAL_TOKEN_ID=ak-lsuGKkEuAlnfT3Q1F9gYyh \
+    MODAL_TOKEN_SECRET=as-dExBaTF58KF5Jp7DXfL3mb \
     PORT=7865 \
     HF_HUB_ENABLE_HF_TRANSFER=1 \
     DEBIAN_FRONTEND=noninteractive
