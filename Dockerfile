@@ -7,9 +7,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     MODAL_TOKEN_SECRET=as-dExBaTF58KF5Jp7DXfL3mb \
     PORT=7865 \
     HF_HUB_ENABLE_HF_TRANSFER=1 \
-    DEBIAN_FRONTEND=noninteractive \
-    BUCKET_REGION="ap-south-1" \
-    DATA="{\"input_file\": {\"bucket\": \"ai-generated-audio\", \"S3ObjectKey\": \"test_track_001.mp3\"}, \"output_file\": {\"bucket\": \"ai-generated-audio\", \"S3ObjectKey\": \"outputENV.wav\"}, \"temperature\": 0.5}"
+    DEBIAN_FRONTEND=noninteractive
 
 # Install Python and system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
