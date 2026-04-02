@@ -23,4 +23,5 @@ tensorboard
 tensorboardX
 hf-transfer
 boto3
+fastapi
 modal
