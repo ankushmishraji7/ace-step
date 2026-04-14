@@ -56,11 +56,45 @@ def process_audio(
     from acestep.pipeline_ace_step import ACEStepPipeline
     from acestep.data_sampler import DataSampler
 
-    def extract_pipeline_hyperparameters(generator_data: dict) -> dict:
+    def extract_pipeline_hyperparameters(generator_data: dict, payload: dict) -> dict:
         return {
-            "audio_duration": generator_data.get("audio_duration", 60.0),
-            "prompt": generator_data.get("prompt", ""),
-            "lyrics": generator_data.get("lyrics", ""),
+            "audio_duration": generator_data.get("audio_duration", -1),
+            "prompt": payload.get("prompt", payload.get("tags", "funk, pop, soul, rock, melodic, guitar, drums, bass, keyboard, percussion, 105 BPM, energetic, upbeat, groovy, vibrant, dynamic")),
+            "lyrics": payload.get("lyrics", generator_data.get("lyrics", """[verse]
+Neon lights they flicker bright
+City hums in dead of night
+Rhythms pulse through concrete veins
+Lost in echoes of refrains
+
+[verse]
+Bassline groovin' in my chest
+Heartbeats match the city's zest
+Electric whispers fill the air
+Synthesized dreams everywhere
+
+[chorus]
+Turn it up and let it flow
+Feel the fire let it grow
+In this rhythm we belong
+Hear the night sing out our song
+
+[verse]
+Guitar strings they start to weep
+Wake the soul from silent sleep
+Every note a story told
+In this night we’re bold and gold
+
+[bridge]
+Voices blend in harmony
+Lost in pure cacophony
+Timeless echoes timeless cries
+Soulful shouts beneath the skies
+
+[verse]
+Keyboard dances on the keys
+Melodies on evening breeze
+Catch the tune and hold it tight
+In this moment we take flight""")),
             "infer_step": generator_data.get("infer_step", 60),
             "guidance_scale": generator_data.get("guidance_scale", 15.0),
             "scheduler_type": generator_data.get("scheduler_type", "euler"),
@@ -125,7 +159,7 @@ def process_audio(
 
         data_sampler = DataSampler()
         sampled_data = data_sampler.sample()
-        hyperparameters = extract_pipeline_hyperparameters(sampled_data)
+        hyperparameters = extract_pipeline_hyperparameters(sampled_data, payload)
 
         os.makedirs(os.path.dirname(output_audio_path), exist_ok=True)
 
